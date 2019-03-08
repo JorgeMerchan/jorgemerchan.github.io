@@ -14,14 +14,14 @@
 
 <body>
   <div class="container">
-    <div class="row py-4 m-10">
+    <div class="row py-4 mx-2">
       <div id="app">
-        <h1>WhatsApp API Link Generator</h1>
-        <div class="row py-4">
+        <h3>WhatsApp API Link Generator</h1>
+        <div class="row py-4 mx-2">
           <input type="tel" name="phone" id="phone" v-model="phone" placeholder="+5491100000000"></div>
-        <div class="row"><textarea name="text" id="text" cols="30" rows="10" v-model="text"></textarea></div>
-        <div class="row py-2"><a :href="`${url}phone=${phone}&text=${text}`">Abrir en WhatsApp:</a></div>
-        <div class="row">{{ url }}phone={{ phone }}&text={{ text }}</div>
+        <div class="row mx-2"><textarea name="text" id="text" cols="30" rows="10" v-model="text"></textarea></div>
+        <div class="row py-2 mx-2"><a :href="`${url}phone=${phone}&text=${text}`">Abrir en WhatsApp:</a></div>
+        <div class="row mx-2">{{ url }}phone={{ phone }}&text={{ text }}</div>
       </div>
     </div>
   </div>
