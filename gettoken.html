@@ -137,18 +137,20 @@
             document.getElementById("client_secret").value = sessionStorage.getItem('client_secret') || client_secret;
             document.getElementById("redirect_uri").value = sessionStorage.getItem('redirect_uri') || redirect_uri;
             document.getElementById("response_type").value = sessionStorage.getItem('response_type') || response_type;
-            document.getElementById("state").value = sessionStorage.getItem('client_id') || state;
+            document.getElementById("state").value = sessionStorage.getItem('state') || state;
             document.getElementById("scope").value = sessionStorage.getItem('scope') || scope;
 
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
             if (code) {
-                document.getElementById("code").value = code;
+                sessionStorage.setItem('code', code);
+                window.location = sessionStorage.getItem('redirect_uri');
+            } else {
+                code = sessionStorage.getItem('code');
+                if (code) {
+                    document.getElementById("code").value = code;
+                }
             }
-        }
-        function remember() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
         }
 
         function getCode() {
