@@ -146,8 +146,8 @@
                 sessionStorage.setItem('code', code);
                 window.location = sessionStorage.getItem('redirect_uri');
             } else {
-                code = sessionStorage.getItem('code') || null;
-                if (code) {
+                if (sessionStorage.getItem('code')) {
+                    code = sessionStorage.getItem('code')
                     document.getElementById("code").value = code;
                 }
             }
