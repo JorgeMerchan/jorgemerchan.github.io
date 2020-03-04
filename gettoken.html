@@ -46,6 +46,13 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="scope" class="col-sm-1-12 col-form-label">Scope</label>
+                        <div class="col-sm-1-12">
+                            <input type="text" class="form-control" name="scope" id="scope"
+                                placeholder="scope">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label for="client_id" class="col-sm-1-12 col-form-label">Client id </label>
                         <div class="col-sm-1-12">
                             <input type="text" class="form-control" name="client_id" id="client_id"
@@ -119,6 +126,7 @@
         var app_id = '';
         var redirect_uri = '';
         var response_type = 'code';
+        var scope = 'openid basic_profile';
         var state = uuidv4();
         var code = '';
 
@@ -135,18 +143,25 @@
                 document.getElementById("code").value = code;
             }
         }
+        function remember() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+        }
 
         function getCode() {
+            auth_url = document.getElementById("auth_url").value;
             client_id = document.getElementById("client_id").value;
             state = document.getElementById("state").value;
             redirect_uri = document.getElementById("redirect_uri").value;
             response_type = document.getElementById("response_type").value;
-            var url = auth_url + `?client_id=${client_id}&response_type=${response_type}&state=${state}&redirect_uri=${redirect_uri}`;
+            scope = document.getElementById("scope").value;
+            var url = auth_url + `?client_id=${client_id}&response_type=${response_type}&state=${state}&redirect_uri=${redirect_uri}&scope=${scope}`;
             window.location = url;
         }
 
         function getToken() {
             code = document.getElementById("code").value;
+            token_url = document.getElementById("token_url").value;
             if (code !== '') {
                 //console.log(code);
                 xmlhttp=new XMLHttpRequest();
