@@ -141,7 +141,7 @@
             document.getElementById("scope").value = sessionStorage.getItem('scope') || scope;
 
             const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
+            var code = urlParams.get('code');
             if (code) {
                 sessionStorage.setItem('code', code);
                 window.location = sessionStorage.getItem('redirect_uri');
