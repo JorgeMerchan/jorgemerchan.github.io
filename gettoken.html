@@ -147,7 +147,7 @@
                 window.location = sessionStorage.getItem('redirect_uri');
             } else {
                 if (sessionStorage.getItem('code')) {
-                    code = sessionStorage.getItem('code')
+                    code = sessionStorage.getItem('code');
                     document.getElementById("code").value = code;
                 }
             }
@@ -177,6 +177,8 @@
 
         function getToken() {
             code = document.getElementById("code").value;
+            document.getElementById("code").value = '';
+            sessionStorage.setItem('code', '');
             token_url = document.getElementById("token_url").value;
             client_id = document.getElementById("client_id").value;
             client_secret = document.getElementById("client_secret").value;            
