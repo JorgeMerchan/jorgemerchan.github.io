@@ -208,7 +208,19 @@
 
                 xmlhttp.open("POST", token_url);
                 xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+                xmlhttp.setRequestHeader('Accept', '*/*');
+                xmlhttp.setRequestHeader('Accept-Encoding', 'gzip, deflate, br');
+                xmlhttp.setRequestHeader('Accept-Language', 'es-ES,es;q=0.9,en;q=0.8');
+                xmlhttp.setRequestHeader('Cache-Control', 'no-cache');
+                xmlhttp.setRequestHeader('Connection', 'keep-alive');
+                xmlhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+                xmlhttp.setRequestHeader('Host', 'https://jorgemerchan.github.io/');
+                xmlhttp.setRequestHeader('Origin', 'https://jorgemerchan.github.io/');
+                xmlhttp.setRequestHeader('Pragma', 'no-cache');
+                xmlhttp.setRequestHeader('Referer', 'https://jorgemerchan.github.io/');
+                xmlhttp.setRequestHeader('Sec-Fetch-Dest', 'empty');
+                xmlhttp.setRequestHeader('Sec-Fetch-Mode', 'cors');
+                xmlhttp.setRequestHeader('Sec-Fetch-Site', 'same-origin');
                 xmlhttp.send(formData);
 
             } else {
