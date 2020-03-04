@@ -204,7 +204,7 @@
 
                 xmlhttp.open("POST", token_url);
                 xmlhttp.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
-                //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", redirect_uri);
+                xmlhttp.setRequestHeader("Access-Control-Allow-Origin", redirect_uri);
                 xmlhttp.send(formData);
 
             } else {
