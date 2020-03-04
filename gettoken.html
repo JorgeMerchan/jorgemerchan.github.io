@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Get Token OIDC</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        label {
+            margin-right: 10px;
+            width: 120px;
+        }
+
+        input[type="text"] {
+            width: 400px;
+        }
+    </style>
+</head>
+
+<body onload="load()">
+    <div class="container">
+        <div class="row">
+            <h1>Get Code</h1>
+            <div class="container">
+                <div class="row">
+                    <a name="" id="home" class="btn btn-primary" href="http://127.0.0.1:8080/gettoken.html" role="button">Home</a>
+                </div>
+                <form>
+                    <div class="form-group row">
+                        <label for="auth_url" class="col-sm-1-12 col-form-label">Auth url</label>
+                        <div class="col-sm-1-12">
+                            <input type="text" class="form-control" name="auth_url" id="auth_url"
+                                placeholder="auth_url">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="token_url" class="col-sm-1-12 col-form-label">Token url</label>
+                        <div class="col-sm-1-12">
+                            <input type="text" class="form-control" name="token_url" id="token_url"
+                                placeholder="token_url">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="client_id" class="col-sm-1-12 col-form-label">Client id </label>
+                        <div class="col-sm-1-12">
+                            <input type="text" class="form-control" name="client_id" id="client_id"
+                                placeholder="client id">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="client_secret" class="col-sm-1-12 col-form-label">Client secret </label>
+                        <div class="col-sm-1-12">
+                            <input type="password" class="form-control" name="client_secret" id="client_secret"
+                                placeholder="client secret">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="redirect_uri" class="col-sm-1-12 col-form-label">Redirect uri</label>
+                        <div class="col-sm-1-12">
+                            <input type="text" class="form-control" name="redirect_uri" id="redirect_uri"
+                                placeholder="redirect uri">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="response_type" class="col-sm-1-12 col-form-label">Response type</label>
+                        <div class="col-sm-1-12">
+                            <input type="text" class="form-control" name="response_type" id="response_type"
+                                placeholder="Response type">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="state" class="col-sm-1-12 col-form-label">State (UUID)</label>
+                        <div class="col-sm-1-12">
+                            <input type="text" class="form-control" name="state" id="state" placeholder="state">
+                        </div>
+                    </div>
+                    <a name="" id="getcode" class="btn btn-primary" href="#" role="button" onclick="getCode()">Get Code</a>
+                </form>
+                <div class="row">
+                    <label for="code" class="col-sm-1-12 col-form-label">Code</label>
+                    <textarea name="code" id="code" cols="50" rows="10" disabled></textarea>
+                </div>
+                <div class="row">
+                    <a name="" id="gettoken" class="btn btn-primary" href="#" role="button" onclick="getToken()">Get Token</a>
+                </div>
+                <div class="row">
+                    <label for="token" class="col-sm-1-12 col-form-label">Token</label>
+                    <textarea name="token" id="token" cols="50" rows="10" disabled></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script>
+        function uuidv4() {
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
+        }
+        var auth_url = '';
+        var token_url = '';
+        var client_id = '';
+        var client_secret = '';
+        var app_id = '';
+        var redirect_uri = '';
+        var response_type = 'code';
+        var state = uuidv4();
+        var code = '';
+
+        function load() {
+            document.getElementById("client_id").value = client_id;
+            document.getElementById("client_secret").value = client_secret;
+            document.getElementById("redirect_uri").value = redirect_uri;
+            document.getElementById("response_type").value = response_type;
+            document.getElementById("state").value = state;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code) {
+                document.getElementById("code").value = code;
+            }
+        }
+
+        function getCode() {
+            client_id = document.getElementById("client_id").value;
+            state = document.getElementById("state").value;
+            redirect_uri = document.getElementById("redirect_uri").value;
+            response_type = document.getElementById("response_type").value;
+            var url = auth_url + `?client_id=${client_id}&response_type=${response_type}&state=${state}&redirect_uri=${redirect_uri}`;
+            window.location = url;
+        }
+
+        function getToken() {
+            code = document.getElementById("code").value;
+            if (code !== '') {
+                //console.log(code);
+                xmlhttp=new XMLHttpRequest();
+                //xmlhttp.withCredentials = true;
+                var formData = new FormData();
+                formData.append("grant_type", 'authorization_code');
+                formData.append("client_id", client_id);
+                formData.append("client_secret", client_secret);
+                formData.append("state", state);
+                formData.append("redirect_uri", redirect_uri);
+                formData.append("code", code);
+
+                xmlhttp.onreadystatechange = function() {
+                    if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        document.getElementById("token").value = xmlhttp.responseText;
+                    }
+                    console.log("xhr status : "+xmlhttp.readyState);
+                    console.log(xmlhttp.responseText);
+                    
+                }
+
+                xmlhttp.open("POST", token_url);
+                xmlhttp.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+                //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", redirect_uri);
+                xmlhttp.send(formData);
+
+            } else {
+                alert('Obtenga un código primero!')
+            }
+        }
+    </script>
+</body>
+
+</html>
