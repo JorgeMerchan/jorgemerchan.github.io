@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Cotización DAI/USD/ARS</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        pre {
+            outline: 1px solid #ccc;
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .string {
+            color: green;
+        }
+
+        .number {
+            color: darkorange;
+        }
+
+        .boolean {
+            color: blue;
+        }
+
+        .null {
+            color: magenta;
+        }
+
+        .key {
+            color: red;
+        }
+    </style>
+</head>
+
+<body onload="getCotizacion()">
+    <div class="container">
+        <div class="row">
+            <h1>Cotizacion</h1>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-1-12">
+                        AR$ -> DAI:
+                        <span id="ars-dai">0.0</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1-12">
+                        DAI -> USD:
+                        <span id="dai-usd">0.0</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1-12">
+                        <strong>Compro USD a:</strong>
+                        <span id="ars-usd">0.0</span>&nbsp;
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-1-12">
+                        USD -> DAI:
+                        <span id="usd-dai">0.0</span>&nbsp;
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1-12">
+                        DAI -> AR$:
+                        <span id="dai-ars">0.0</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1-12">
+                        <strong>Vendo USD a:</strong>
+                        <span id="usd-ars">0.0</span>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <label for="pesos" class="col-sm-1-12 col-form-label">Pesos</label>
+                    <div class="col-sm-1-12">
+                        <input type="text" class="form-control" name="pesos" id="pesos" placeholder="pesos"
+                            value="20000">
+                    </div>
+                    <a class="btn btn-secondary" href="#" role="button" onclick="getDolares()">Cambiar</a>
+                    &nbsp;
+                    <span id="cambio_pesos">0.0</span>&nbsp; USD
+                </div>
+                <div class="form-group row">
+                    <label for="dolares" class="col-sm-1-12 col-form-label">Dolares</label>
+                    <div class="col-sm-1-12">
+                        <input type="text" class="form-control" name="dolares" id="dolares" placeholder="dolares"
+                            value="200">
+                    </div>
+                    <a class="btn btn-secondary" href="#" role="button" onclick="getPesos()">Cambiar</a>
+                    &nbsp;
+                    <span id="cambio_dolares">0.0</span>&nbsp; ARS
+                </div>
+                <br>
+                <a id="notifications" class="btn btn-danger" href="#" role="button"
+                    onclick="notifications()">Notifications - Off</a>
+                <a id="change_limit" class="btn btn-primary" href="#" role="button" onclick="changeLimit()">Limit: 121</a>
+                <a class="btn btn-secondary" href="#" role="button"
+                    onclick="showResponse()">Show Response</a>
+                <a class="btn btn-info" href="#" role="button"
+                    onclick="getCotizacion()">Get Cotización</a>
+                <br>
+                <div class="row" id="response_div" style="display: none;">
+                    <div class="col-sm-1-12">
+                        <strong>Response:</strong>
+                        <div id="response"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script>
+        var limit = 121;
+        var time = 60; // seconds
+        var timer;
+
+        const startNotifications = () => { //60s
+            console.log('Start of Notifications');
+            let duracion = parseInt(prompt("Duración: ", time));
+            timer = setTimeout(getCotizacion, duracion * 1000);
+        };
+        const stopNotifications = () => {
+            console.log('Stop of Notifications');
+            window.clearTimeout(timer);
+        };
+
+        const changeLimit = () => {
+            limit = parseFloat(prompt("Limite de cotización", limit));
+            document.getElementById('change_limit').innerText = 'Limit: ' + limit;
+        }
+        const getCotizacion = () => {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var myJSON = JSON.parse(this.responseText);
+                    document.getElementById("response").appendChild(document.createElement('pre')).innerHTML = syntaxHighlight(myJSON);
+                    calcular(myJSON);
+                }
+            }
+            xmlhttp.open("GET", 'https://be.buenbit.com/api/market/tickers/', true);
+            xmlhttp.send();
+        };
+        const calcular = (json) => {
+            //Precio al que cambio de DAI a ARS
+            document.getElementById("ars-dai").innerText = json.object.daiars.purchase_price;
+            //Precio al que me compran los DAI por USD 
+            document.getElementById("dai-usd").innerText = json.object.daiusd.selling_price;
+            //Precio al que cambio de DAI a USD
+            document.getElementById("usd-dai").innerText = json.object.daiusd.purchase_price;
+            //Precio al que me cambian ARS por DAI
+            document.getElementById("dai-ars").innerText = json.object.daiars.selling_price;
+
+            document.getElementById("ars-usd").innerText = (1 / ((1 / parseFloat(json.object.daiars.selling_price)) * parseFloat(json.object.daiusd.purchase_price))).toFixed(2);
+            document.getElementById("usd-ars").innerText = ((1 / parseFloat(json.object.daiusd.selling_price)) * parseFloat(json.object.daiars.purchase_price)).toFixed(2);
+
+            getDolares();
+            getPesos();
+
+            alertarMe();
+        };
+        const alertarMe = () => {
+            if (parseFloat(document.getElementById("dai-ars").innerText) < limit) {
+                notifyMe(document.getElementById("dai-ars").innerText);
+            }
+        };
+        const getDolares = () => {
+            //(pesos / daiars.selling_price) * daiusd.purchase_price
+            let ars = parseFloat(document.getElementById("pesos").value);
+            let arsusd = parseFloat(document.getElementById("ars-usd").innerText);
+            let dolares = ars / arsusd;
+            document.getElementById("cambio_pesos").innerText = dolares.toFixed(2);
+        };
+        const getPesos = () => {
+            //(usd / daiusd.selling_price) * daiars.purchase_price;
+            let usd = parseFloat(document.getElementById("dolares").value);
+            let usdars = parseFloat(document.getElementById("usd-ars").innerText);
+            let pesos = usd * usdars;
+            document.getElementById("cambio_dolares").innerText = pesos.toFixed(2);
+        };
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') {
+                json = JSON.stringify(json, undefined, 4);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+        /*
+
+        20000 ARS -> DAI (125) = 160
+        160 DAI -> USD (1.06) = 169.6
+
+        (pesos / daiars.selling_price) * daiusd.purchase_price
+        0.00848
+
+        200 USD -> DAI (1.13) = 176.99
+        176.99 DAI -> ARS (119) = 21061,81
+        (usd / daiusd.selling_price) * daiars.purchase_price;
+        105.309
+        */
+        const showResponse = () => {
+            if (document.getElementById("response_div").style.display == 'none')
+                document.getElementById("response_div").style.display = '';
+            else
+                document.getElementById("response_div").style.display = 'none';
+        };
+        const notifications = () => {
+            if (document.getElementById('notifications').className == 'btn btn-danger') {
+                document.getElementById('notifications').className = 'btn btn-success';
+                document.getElementById('notifications').innerText = 'Notitifications - On';
+                startNotifications();
+            } else {
+                document.getElementById('notifications').className = 'btn btn-danger';
+                document.getElementById('notifications').innerText = 'Notitifications - Off';
+                stopNotifications();
+            }
+        };
+        // request permission on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!Notification) {
+                alert('Desktop notifications not available in your browser. Try Chromium.');
+                return;
+            }
+
+            if (Notification.permission !== 'granted')
+                Notification.requestPermission();
+        });
+        function notifyMe(precio) {
+            if (Notification.permission !== 'granted')
+                Notification.requestPermission();
+            else {
+                var notification = new Notification('Alerta de Precio!', {
+                    icon: 'icon-logo-buenbit.png',
+                    body: 'El precio de compra es: ' + precio,
+                });
+                notification.onclick = function () {
+                    window.open('https://app.buenbit.com/');
+                };
+            }
+        }
+    </script>
+</body>
+
+</html>
